@@ -1,0 +1,5 @@
+<div class="favit" style="float: right;">
+    <button class="btn favorite glyphicon" href="{% url 'favit.views.add_or_remove'%}" model="{{target_model}}" id="target_{{ target_object_id }}">
+          <i class="glyphicon-star{% if not undo %}-empty{% endif %}"></i> Favourite </button>
+      <span class="fav-count">{{ fav_count }}</span>
+      </div>
