@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load render_table from django_tables2 %}
+
+<!doctype html>
+<html>
+    <head>
+      {% block title %} Intervals {% endblock %}
+    </head>
+    <body>
+      {% load cms_tags %}
+{% block content %}
+        <form action="" method="get">
+        {{ aln.form.as_p }}
+        <input type="submit" />
+    </form>
+         <link rel="stylesheet"
+      href="\static\django_tables2/themes/paleblue/css/screen.css" />
+        {% render_table al %}
+    </form>
+    </body>
+{% endblock %}
+</html>

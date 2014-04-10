@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+<!doctype html>
+<html>
+    <head>
+      {% block title %} Intervals {% endblock %}
+    </head>
+    <body>
+     {% block content %}
+        <form action="" method="get">
+        {{ graph.form.as_p }}
+        <input type="submit" />
+    </form>
+{% for obj in graph %}
+        {{ obj.mirName }} <br />
+{% endfor %}
+         <link rel="stylesheet"
+      href="\static\django_tables2/themes/paleblue/css/screen.css" />
+    </form>
+    </body>
+{% endblock %}
+</html>

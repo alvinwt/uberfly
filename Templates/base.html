@@ -1,0 +1,82 @@
+{% load render_table from django_tables2 %}
+{% load static %}
+{% url 'logout' as logout_url %}
+{% url 'graph_form' as g_url %}
+{% load favit_tags %}
+{% load admin_urls %}
+{% url 'interval' as int_url %}
+<!DOCTYPE html>
+<html lang="en">
+<html>
+  <head>
+      <link rel="stylesheet" href="{% static '/static/favit/css/css/favorite.css' %}">
+         <link rel="stylesheet" href="{% static '/static/paleblue/css/screen.css'%}" />
+             <link rel="stylesheet" href="{% static '/static/bootstrap/css/bootstrap.css' %}" >
+        <title>{% block title %}{% endblock %}</title>
+</head>
+       <body>
+{% if user.is_authenticated %}
+<div class="container">
+<div id ="navigation">
+{% block navigation %}
+      <!-- Static navbar -->
+      <div class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+{% if user.is_superuser %}
+<a class="navbar-brand" href="{% url 'admin:index' %}"><big>ÜberFly</big></a>
+{% else %}
+<a class="navbar-brand" href="{{ int_url }}"><big>ÜberFly</big></a>
+{% endif %}
+</div>       
+          <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+              <li> 
+      <a href="{{ int_url }}"/>miRNAs</a></li>
+              <li>  {% url 'int_filter' as search_url %}
+      <a href="{{ search_url }}"/>Search</a></li>
+              <li><a href="{{ g_url }}"/>Read Length Analysis</a></li>
+<li class="dropdown">
+                <a href="#" class="dropdown-toggle"
+                data-toggle="dropdown">Links <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="{% url 'about' %}">About Us</a></li>
+                  <li><a href="{% url 'license' %}">License</a></li>
+                  <li><a href="{% url 'help' %}">Help Page</a></li>
+                  <li class="divider"></li>
+                  <li class="dropdown-header">Other Links</li>
+                  <li><a href="http://www.mirbase.org">miRBase</a></li>
+                  <li><a href="http://genome.ucsc.edu">UCSC Genome
+                  Browser</a></li>
+                  <li><a href="https://www.djangoproject.com/">Django Documentation</a></li></ul></li><ul class="nav navbar-nav navbar-right">
+            </li><li><a href="{% url 'user' user.id %}"/>{{user.username|capfirst}}'s Page</a></li><li><a href="{{ logout_url }}"/>Logout</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div><!--/.container-fluid -->
+{% endblock %}
+  {% endif %}
+</div>
+<div id="header">
+    {% block header %} {% endblock %}
+   </div>
+</div> 
+      <div id= "content">
+       {% block content %}
+       {% endblock %}
+</div>
+
+<hr>
+   <p><em>ÜberFly: a miRNA analytics system built by biologists, for biologists.</em></p>
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+       <script src="{% static 'favit/js/favorite.js' %}"></script>
+</body>
+</html>

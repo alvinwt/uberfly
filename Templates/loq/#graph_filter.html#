@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+<!doctype html>
+<html>
+    <head>
+      {% block title %} Intervals {% endblock %}
+    </head>
+    <body>
+     {% block content %}
+        <form action="" method="post"
+    {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>{% csrf_token %}
+{{form.as_ul}}
+        <input type="submit" />
+    </form>
+        {% for i in g %}
+        {{i.mirName}}
+        {% endfor %}
+         <link rel="stylesheet"
+      href="\static\django_tables2/themes/paleblue/css/screen.css" />
+    </form>
+    </body>
+{% endblock %}
+</html>

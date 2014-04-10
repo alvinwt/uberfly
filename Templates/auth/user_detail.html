@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load render_table from django_tables2 %}
+{% load staticfiles %}
+{% block content %}
+{% load favit_tags %}
+{% load comments %}
+<!doctype html> 
+<html>
+    <head>
+         <style>
+          
+   </style>
+    </head>
+    <body>
+   <h3>{{user.username|title }}'s Page</h3>
+      {% render_table user_detail %}
+      <br>
+        <h4> Comments by {{user.username|title}}</h4 >
+{% render_table table2 %}
+
+        <br>
+<h4> miRNA Favourited by {{user.username|title}}</h4>
+{% render_table fav %}
+
+          
+{% endblock %}  
+</body>
+</html>
+  

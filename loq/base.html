@@ -1,0 +1,24 @@
+{% load cms_tags sekizai_tags %}
+{% load render_table from django_tables2 %}
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+<html>
+  <head>
+     {% render_block "css" %}
+       <title>{% block title %}{% endblock %}</title>
+  <body>
+      {% cms_toolbar %}
+     
+      {% placeholder base_content %}
+      {% block base_content %}{% endblock %}
+      
+    <h1>Small RNA Biogenesis Site</h1>
+    {% block content %}{% endblock %}
+    <hr>
+    
+
+    {% block graph %}{% endblock %}
+    <p>Site Under Construction.</p>
+      {% render_block "js" %}
+</body>
+</html>

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Location Id</h2>
+    <ul>
+      <table border ="1">
+        <tr>
+          <th>Interval </th>
+          <th>Big2CatNormRead</th>
+          <th>Average Counts</th>
+          </tr>
+        <tr>
+        {% for location in object_list %}
+        <td><li>{{ location.chr}} : {{ location.start}} - {{ location.stop }}</li>
+        </td>
+        <td>{{location.big2catnormRead}}</td>
+        <td> {{ Count_table }}          
+        </tr>
+            {% endfor %}
+    </ul>
+{% endblock %}
+    

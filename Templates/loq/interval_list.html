@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load render_table from django_tables2 %}
+<!DOCTYPE html>
+<html>
+    <head>
+      <link rel="stylesheet" type="text/css"
+            href="\static\paleblue/css/screen.css">
+       {% block title %}miRNA Intervals{% endblock %}
+    </head>
+    <body>
+      {% block content %}
+ <H3>miRNA Intervals</H3>
+  <link rel="stylesheet"
+      href="\static\django_tables2/themes/paleblue/css/screen.css" />
+  <div class = "row-fluid">
+     <div class ="span4"></div>
+    <div class ="span8">
+      {% render_table table %}
+      </div>
+     <div class ="span4"></div>
+    </div>
+  <br>
+    <img src="{% static '/static/big.svg' %}" class="img-responsive img-thumbnail " alt="Responsive image" type="image/svg+xml">
+{% endblock %}
+    </body>
+</html>

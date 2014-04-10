@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% load cms_tags %}
+{% load render_table from django_tables2 %}
+{% load staticfiles %}
+{% block content %}
+<!doctype html>
+<html>
+    <head>
+         <style>
+   table {border-collapse:collapse; table-layout:auto; width:355px;}
+   table td {border:solid 1px ; width:100px; word-wrap:break-word;}
+   </style>
+    </head>
+    <body>
+    <link rel="stylesheet"
+    href="\static\django_tables2/themes/paleblue/css/screen.css" />
+
+   
+    
+      <TABLE>
+    <CAPTION>Read_alignment Data for Candidate {{read_alignment.id}}</CAPTION>
+
+
+<table border="1" bordercolor="#000000" style="background-color:#FFFFFF" width="90%" cellpadding="3" cellspacing="3">
+    <TR class="even">
+      <td>Id</td>
+		<td>Chromosome</td>
+		<td>Start</td>
+		<td>Stop</td>
+                <td>Strand</td>
+		<td>Normalized Reads</td>
+		<td>Read Count</td>
+		<td>Sequence </td>
+	</tr>
+	<tr><td>
+        {{read_alignment.id}}</TD><TD>    
+        {{read_alignment.chr}}</TD><TD>
+        {{read_alignment.start}}</TD><TD>
+        {{read_alignment.stop}} </TD><TD>
+        {{read_alignment.strand}} </TD><TD>
+        {{read_alignment.normReads}} </TD><TD>
+        {{read_alignment.read_counts}}</TD><TD>
+        {{read_alignment.sequence}}</TR>
+  </TABLE>
+{% block table %}
+ {% render_table detail %}
+        {% endblock table %}
+     <applet  code="VARNA.class" codebase="\static\" archive={% static "VARNA.jar" %} width="550" height="350"/>
+ <param name="sequenceDBN"  value="{{seq}}"/>
+  <param name="structureDBN" value="...............(((((....(((..(((.....)))))))))))...."/>
+  <param name="colorMap" value="2.1,3.0,7.4,3.1,1.4,0.8,9.5,1.5,
+   0.1,2.9,1.7,0.6,2.5,4.5,7.3,5.2,1.5,8.8,2.9,9.9,0.5,1.2,4.3,4.4,
+   6.3,8.5,7.4,2.5,0.4,8.2,0.8" />
+  <param name="colorMapStyle" value="red" />
+  <param name="colorMapCaption" value="Coolness" />
+  <param name="colorMapStyle" value="green" />
+  <param name="colorMapStyle" value="blue" />
+  <param name="colorMapStyle" value="bw" />
+  <param name="colorMapStyle" value="heat" />
+  <param name="colorMapStyle" value="0:#FFFF00;1:#ffFFFF;6:#FF0000"/>
+  <param name="rotation" value="-20.0" />
+</applet>
+{% block base_content %}
+ {% placeholder template_1_content %}
+{% endblock %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <title>
+      Google Visualization API Sample
+    </title>
+    <script type="text/javascript" src="//www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load('visualization', '1.1', {packages: ['corechart', 'controls']});
+    </script>
+    <script type="text/javascript">
+      function drawVisualization() {
+        var dashboard = new google.visualization.Dashboard(
+             document.getElementById('dashboard'));
+      
+         var control = new google.visualization.ControlWrapper({
+           'controlType': 'ChartRangeFilter',
+           'containerId': 'control',
+           'options': {
+             'filterColumnIndex': 0,
+             'ui': {
+               'chartType': 'AreaChart', 
+              'chartOptions': {
+                 'chartArea': {'width': '90%'},
+              'hAxis': {},
+               },
+               'chartView': {
+                 'columns': [0, 1]
+               },
+               'minRangeSize': 10
+             }
+           },
+           'state': {}
+         });
+      
+            var chart = new google.visualization.ChartWrapper({
+     'chartType': 'AreaChart',
+     'containerId': 'chart',
+     'options': {
+       // Use the same chart area width as the control for axis alignment.
+       'chartArea': {'height': '80%', 'width': '90%'},
+        'title':'Read Counts per Genomic location at {{read_alignment.chr}}:{{read_alignment.start}}-{{read_alignment.stop}}',
+       'hAxis': {'minorGridlines.count':5, 'slantedText':
+     true,'title':'Postion.','textPosition': 'in'}, 
+       'vAxis': {'viewWindow': {'min': 0, 'max': '90%' },'title':'Read Counts'},
+       'legend': {'position': 'none'}
+     }
+         });
+
+          var data = new google.visualization.DataTable();
+          data.addColumn('number','Position');
+      data.addColumn('number','Read Counts');
+       data.addRows({{graph}});    
+         dashboard.bind(control, chart);
+         dashboard.draw(data);
+      }
+      
+      google.setOnLoadCallback(drawVisualization);
+    </script>
+  </head>
+  <body>
+    <div id="dashboard">
+        <div id="chart" style='width: 915px; height: 300px;'></div>
+        <div id="control" style='width: 915px; height: 50px;'></div>
+    </div>
+  </body>
+</html>
+​
+​</body>
+<table border="1" bordercolor="#000000"
+       style="background-color:#FFFFFF;width:900px;overflow:auto">
+  <tr><td><pre>{{seq}}</pre>
+	</tr>
+	<tr>
+	<td><div><pre>{{ msa }}</pre></div>
+	</tr>
+     </table>  
+</html>
+
+{% endblock %}
+{% block graph %}
+{% endblock graph %}
+
