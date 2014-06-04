@@ -6,7 +6,8 @@ from loq.models import Read_alignment, AlignFilter
 from reportlab.pdfgen import canvas
 from django.http import HttpResponse
 
-#page for table with alignments, intervals of all data
+"""Generates a page for table with alignments, intervals of all data, but currently not linked to UberFly webpage
+"""
 
 def align(request):
     table= AlignTable(Read_alignment.objects.all().order_by('strand','id'))

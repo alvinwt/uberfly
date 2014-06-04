@@ -7,6 +7,9 @@ from django.contrib.auth.models import User
 from django.contrib.comments.models import Comment
 from favit.models import Favorite
 
+""" Tables.py declare the different table formats used by DjangoTables2. Each view.py page retrieves the table config using e.g. UserTable and this is where you change the sequence of field, or what fields to be included. 
+"""
+
 class UserTable(SingleTableMixin,tables.Table):
     class Meta:
         model = User
@@ -38,7 +41,7 @@ class IntervalTable(tables.Table):
         order_by = ('id',)
         fields =('mirName','NeatName','chr','start','stop','mapped_strand','IntervalSize','sum_read_counts','sum_normReads','Link')
 
-        # link column. name = " ", " " = AlignDetailView
+
 
 class IntervalTable1(tables.Table):
      mirName = tables.LinkColumn('IntervalDetailView',args=[A('pk')])
@@ -69,6 +72,3 @@ class DetailTable(SingleTableMixin,tables.Table):
         attrs = {"class":"paleblue"}
         fields=('lib','chr','start','stop','read_counts','genomic_hits','strand','normReads','sequence','read_length')
        
-
-#table_data = (Read_alignment.objects.get(id='127'))
-#class IntervalDetailTable(SingleTableMixin,tables.Table):

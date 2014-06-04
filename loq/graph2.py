@@ -23,6 +23,9 @@ sns.set(style='whitegrid',palette="hls",context='talk')
 # sns.set(style='whitegrid',palette=["#000000", "#E69F00", "#56B4E9", "#009E73", "#8C1515", "#D55E00", "#CC79A7"],context='talk')
 
 
+""" Deprecated. Alternate graphing script. Needs to be compared and checked with graph_view.py
+"""
+
 def plot_graph(name,libraries,chart_type,normal,style):
     """Retrieves the values from the database with the entries mapped in the form and returns a graph"""
     interval_object = Interval.objects.select_related().get(mirName__icontains=name)

@@ -32,6 +32,9 @@ from Bio.Align.Applications import ClustalOmegaCommandline
 from rest_framework import serializers
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView
 
+""" Deprecated
+"""
+
 class LibraryListView(ListView):
     model = Library
     context_object_name = 'library_id'

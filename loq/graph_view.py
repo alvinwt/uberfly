@@ -1,24 +1,35 @@
 import matplotlib as mpl
 mpl.use('Agg')
-from django.core.urlresolvers import reverse
 from django.shortcuts import render
 import pandas as pd
 import numpy as np
 from django.db.models import Count, Sum
 import matplotlib.pyplot as plt
-from django.views.generic.edit import FormView
-from django.core.urlresolvers import reverse_lazy
-from loq.models import Interval ,Read_alignment, Library
+from loq.models import Interval
 from loq.forms import GraphForm
 from django.http import HttpResponseRedirect, HttpResponse
-from django.db.models import Count, Sum
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 import seaborn as sns
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from mpl_toolkits.axes_grid.anchored_artists import AnchoredText
-#sns.set(style='whitegrid',palette="hls",context='poster')
-#sns.set(style='whitegrid',palette=["#000000", "#E69F00", "#56B4E9", "#009E73", "#8C1515", "#D55E00", "#CC79A7"],context='poster')
-sns.set(palette=['#088A08','#0000FF','#FF0000','#58FA58','#2E9AFE','#FFBF00'],context='poster',style='whitegrid')
+
+
+""" Graph view contains the business logic of the read length distribution generator
+
+the plot graph function takes the miRNA name, libraries for calculation, chart format, normalization method and graph style.
+Returns a matplotlib graph in a http response object to be thrown onto a page.
+
+the graph_form function throws exceptions and handles the input from the form and uses it as variables to plot the graphs
+"""
+
+# colour scheme suitable for red-green blindness
+#sns.set(style='whitegrid', palette=["#000000", "#E69F00", "#56B4E9", "#009E73", "#8C1515", "#D55E00", "#CC79A7"],context='poster')
+
+# standard colour scheme using seaborn grid formatting
+sns.set(palette=['#088A08','#0000FF','#FF0000','#58FA58','#2E9AFE','#FFBF00'],
+        context='poster',style='whitegrid')
+
+# loads latex in matplotlib
 pgf_with_custom_preamble = { 'text.usetex':True,
                             'text.latex.unicode':True,
                             'text.latex.preamble':[r"\usepackage{booktabs}"]
@@ -26,12 +37,24 @@ pgf_with_custom_preamble = { 'text.usetex':True,
 mpl.rcParams.update(pgf_with_custom_preamble)
 
 
-def plot_graph(name,libraries,chart_type,normal,style):
-    """Retrieves the values from the database with the entries mapped in the form and returns a graph"""    
+def plot_graph(name,libraries,
+               chart_type,normal,style):
+    """Retrieves the values from the database with the entries
+               mapped in the form and returns a graph"""    
+
+    # Retrieves miRNA related values using miRNA name as name
     interval_object = Interval.objects.select_related().get(mirName__icontains=name)
+
+    # Get reads mapping to the interval, ordered by library
     read_object= interval_object.read_alignment_set.filter(library__rescue__in=libraries).order_by('lib')
-    len_count =read_object.values('read_length','library__rescue','read_counts','intervalName__sum_read_counts','normReads').annotate(Count('read_length')).order_by('read_length')
-    lib_total_count =read_object.values('library__rescue').annotate(Sum('read_counts'))
+
+    # Generate a dictionary like object with each field in read mapped 
+    len_count = read_object.values('read_length','library__rescue',
+                                  'read_counts','intervalName__sum_read_counts',
+                                  'normReads').annotate(Count('read_length')).order_by('read_length')
+
+    # count read counts per library
+    lib_total_count = read_object.values('library__rescue').annotate(Sum('read_counts'))
 
     #Generates a list of read lengths
     length=[]
@@ -40,7 +63,8 @@ def plot_graph(name,libraries,chart_type,normal,style):
     lengths_reads = sorted(set(length))
 
     #Generate dataframe, fills it with 0s and intiate a dict with lib:read count values 
-    df = pd.DataFrame(index=lengths_reads, columns=libraries, dtype='float64')
+    df = pd.DataFrame(index=lengths_reads,
+                      columns=libraries, dtype='float64')
     df = df.fillna(0).convert_objects()
     d= {}                
     for j in lib_total_count:
@@ -71,13 +95,18 @@ def plot_graph(name,libraries,chart_type,normal,style):
     fig= plt.figure(figsize=(8.27, 11.69), dpi=200)
     fig.set_facecolor("None")
     grid_size=(6,2) 
-    ax1 = plt.subplot2grid(grid_size,(0,0),rowspan=4,colspan=2)
-    graph = df.plot(ax=ax1 ,style=style,kind=chart_type,figsize=(10,8),subplots=False,legend=False)
+
+    ax1 = plt.subplot2grid(grid_size,(0,0),
+                           rowspan=4,colspan=2)
+    graph = df.plot(ax=ax1 ,style=style,
+                    kind=chart_type,figsize=(10,8),
+                    subplots=False,legend=False)
     plt.title('Read Length Distribution of '+ str(interval_object.mirName))
     plt.xlabel('Length of Read')
     handles, labels = graph.get_legend_handles_labels()
     #graph.legend(handles, labels)
-    graph.legend(handles,[i+' '+str(df[i].sum().round(2)) for i in libraries], title= 'Library : Total ',loc='best')
+    graph.legend(handles, [i+' '+str(df[i].sum().round(2)) for i in libraries],
+                 title= 'Library : Total ',loc='best')
 
     plt.grid(True)
     plt.ylabel(title)
@@ -103,7 +132,8 @@ def plot_graph(name,libraries,chart_type,normal,style):
                num = int(i[2])
             else:
                 num = "%.2f"%i[2]
-            plt.annotate(num , (int(i[0]),int(i[1])), xytext=(int(i[0]),int(i[1])), fontsize=12)
+            plt.annotate(num , (int(i[0]),int(i[1])),
+                         xytext=(int(i[0]),int(i[1])), fontsize=12)
             
     # Generates the tables of values using the 2 plot spaces ax2, ax3
     df_round = np.round(df,2)        
@@ -113,7 +143,8 @@ def plot_graph(name,libraries,chart_type,normal,style):
     ax2.axis('off')
     at = AnchoredText(tex,
         prop=dict(size=8), frameon=False,
-                  loc=1,  bbox_to_anchor=(0.8,1.0), bbox_transform=ax2.transAxes)
+                  loc=1,  bbox_to_anchor=(0.8,1.0),
+                  bbox_transform=ax2.transAxes)
     at.patch.set_boxstyle("round,pad=0.,rounding_size=0.2")
     ax2.add_artist(at)
 
@@ -123,7 +154,8 @@ def plot_graph(name,libraries,chart_type,normal,style):
     summary = summ.to_latex(na_rep='').replace('\n', ' ')
     at2 = AnchoredText(summary,
         prop=dict(size=8), frameon=False,
-                  loc=1,  bbox_to_anchor=(0.9,1.0), bbox_transform=ax3.transAxes)
+                  loc=1,  bbox_to_anchor=(0.9,1.0),
+                  bbox_transform=ax3.transAxes)
     at2.patch.set_boxstyle("round,pad=0.,rounding_size=0.2")
     ax2.add_artist(at2)
 
@@ -152,7 +184,8 @@ def Graph_Form(request):
                 name= form.cleaned_data['mirName']
                 libraries = form.cleaned_data['Library']
                 chart_type = form.cleaned_data['Chart']
-                # Tells what kind of plot it is, line plots have special options like style that bar charts don't have
+                # Tells what kind of plot it is,
+                # line plots have special options like style that bar charts don't have
                 if chart_type == 'line':
                     style = 'o-'
                 else :
@@ -160,17 +193,18 @@ def Graph_Form(request):
                 normal = form.cleaned_data['Normal']
                 try:
                     #tries to generate a response page with the plots plus variables from the form
-                    response =  plot_graph(name,libraries,chart_type,normal,style)
+                    response =  plot_graph(name,libraries,
+                                           chart_type,normal,style)
                     return response 
                     
                     # if more than one miRNA is found when searching for the mirName, throw this error
-                except (MultipleObjectsReturned), e :
+                except (MultipleObjectsReturned) :
                     return HttpResponse("Please provide a specific query. Your search returned more than one result.")
                 # throws error when search returns no results 
                 except ObjectDoesNotExist:
                     return HttpResponse("Please check your query, the miRNA does not exist in the database.")
             else:
-                ## gets data from redirect from interval detail page, using the previous mirName for data
+                # gets data from redirect from interval detail page, using the previous mirName for data
                 form = GraphForm()
                 if request.GET['url']:
                     interval_id= request.GET['url'].split('/')[1]

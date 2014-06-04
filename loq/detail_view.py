@@ -4,6 +4,9 @@ from reportlab.pdfgen import canvas
 from django.http import HttpResponse
 #from GChartWrapper import *
 
+""" Deprecated. Last used in srb 
+"""
+
 import re
 from Bio import SeqIO
 from Bio.Seq import Seq
@@ -34,6 +37,7 @@ class AlignDetailView(SingleTableMixin,DetailView):
 
     # def get_sum(self):
     #     sum = self.object.read_counts +self.object.read_counts
+
     #     return sum
 
     def get_seq(self):

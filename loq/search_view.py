@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-
+### Deprecated
 
 @api_view(('GET',))
 def api_root(request, format=None):
